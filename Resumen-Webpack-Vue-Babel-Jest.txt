@@ -1,0 +1,266 @@
+npm init -y
+==============================================================
+npm install --save vue vue-router
+==============================================================
+npm install --save-dev webpack webpack-cli
+==============================================================
+mkdir src && cd src && mkdir pages && type null > app.js && mkdir router
+==============================================================
+mkdir store && mkdir components type nul > App.vue && cd..
+==============================================================
+//src/app.js
+import Vue from 'vue'
+import App from './App.vue'
+new Vue({
+  el: '#app',
+  render: h => h(App)
+})
+==============================================================
+//src/App.vue
+<template>
+  <div>
+    <h1>Hello World!</h1>
+  </div>
+</template>
+==============================================================
+//build/webpack.config.dev.js
+'use strict'
+const { VueLoaderPlugin } = require('vue-loader')
+module.exports = {
+  mode: 'development',
+  entry: [
+    './src/app.js'
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.vue$/,
+        use: 'vue-loader'
+      }
+    ]
+  },
+  plugins: [
+    new VueLoaderPlugin()
+  ]
+}
+==============================================================
+npm install --save-dev vue-loader vue-template-compiler vue-style-loader css-loader
+==============================================================
+//package.json
+"build": "webpack --config build/webpack.config.dev.js"
+==============================================================
+//index.html
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>My Vue app with webpack 4</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script src="dist/main.js" type="text/javascript"></script>
+  </body>
+</html>
+==============================================================
+npm run build
+==============================================================
+npm install --save-dev webpack-dev-server
+==============================================================
+"dev": "webpack-dev-server --config build/webpack.config.dev.js"
+==============================================================
+//index.html    ->Remove
+<script src="dist/main.js" type="text/javascript"></script>
+==============================================================
+npm install --save-dev html-webpack-plugin
+==============================================================
+//build/webpack.config.dev.js
+'use strict'
+const { VueLoaderPlugin } = require('vue-loader')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+module.exports = {
+  mode: 'development',
+  entry: [
+    './src/app.js'
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.vue$/,
+        use: 'vue-loader'
+      }
+    ]
+  },
+  plugins: [
+    new VueLoaderPlugin(),
+    new HtmlWebpackPlugin({
+      filename: 'index.html',
+      template: 'index.html',
+      inject: true
+    })
+  ]
+}
+==============================================================
+npm run dev
+==============================================================
+//build/webpack.config.dev.js
+'use strict'
+const webpack = require('webpack')
+const { VueLoaderPlugin } = require('vue-loader')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+module.exports = {
+  mode: 'development',
+  
+  entry: [
+    './src/app.js'
+  ],
+  devServer: {
+    hot: true,
+    watchOptions: {
+      poll: true
+    }
+  },
+  module: {
+    rules: [
+      {
+        test: /\.vue$/,
+        use: 'vue-loader'
+      }
+    ]
+  },
+  plugins: [
+    new webpack.HotModuleReplacementPlugin(),
+    new VueLoaderPlugin(),
+    new HtmlWebpackPlugin({
+      filename: 'index.html',
+      template: 'index.html',
+      inject: true
+    })
+  ]
+}
+==============================================================
+npm run dev
+==============================================================
+//src/App.vue
+<template>
+  <div class="full-width center-content">
+    <h1>Hello World!</h1>
+  </div>
+</template>
+<style scoped>
+.full-width {
+  width: 100%;
+}
+.center-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+</style>
+==============================================================
+npm run dev ->Error
+==============================================================
+//assets/app.css
+.full-width {
+  width: 100%;
+}
+.center-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+==============================================================
+//src/app.js
+import '../assets/app.css'
+==============================================================
+npm run dev ->Error
+==============================================================
+//src/App.vue   ->Remove the styles
+==============================================================
+//build/webpack.config.dev.js   ->Add rules
+{
+  test: /\.css$/,
+  use: [
+    'vue-style-loader',
+    'css-loader'
+  ]
+}
+==============================================================
+npm install --save-dev vue-style-loader
+==============================================================
+npm install --save-dev stylus stylus-loader
+==============================================================
+//build/webpack.config.dev.js   ->Add rules
+{
+  test: /\.styl(us)?$/,
+  use: [
+    'vue-style-loader',
+    'css-loader',
+    'stylus-loader'
+  ]
+}
+==============================================================
+//assets/app.styl
+.full-width
+  width 100%
+.center-content
+  display flex
+  justify-content center
+  align-items center
+==============================================================
+npm run dev
+==============================================================
+//src/components/HelloComponent.vue
+<template>
+  <h1>Hello {{ name }}!</h1>
+</template>
+<script>
+export default {
+  props: {
+    name: {
+      type: String,
+      required: true
+    }
+  }
+}
+</script>
+<style lang="stylus" scoped>
+h1
+  color red
+</style>
+==============================================================
+//src/App.vue
+<template>
+  <div class="full-width center-content">
+    <hello-component name="World" />
+  </div>
+</template>
+<script>
+import HelloComponent from './components/HelloComponent.vue'
+export default {
+  components: {
+    HelloComponent
+  }
+}
+</script>
+==============================================================
+npm install --save-dev babel-core babel-loader babel-preset-env
+==============================================================
+//build/webpack.config.dev.js   ->Add rules after vue-loader
+{
+  test: /\.js$/,
+  use: 'babel-loader'
+}
+==============================================================
+//.babelrc
+{
+  "presets": [
+    ["env", {
+      "modules": false,
+      "targets": {
+        "browsers": ["> 1%", "last 2 versions", "not ie <= 8"]
+      }
+    }]
+  ]
+}
+==============================================================
+npm i -D @babel/core
